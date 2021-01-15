@@ -38,7 +38,7 @@ def get_filters():
     while True:
         day = str(input('Any day of the week in particular or just all?'))
         if day not in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday', 'all'):
-            print ('No data selected, Please type one particular day or all')
+            print ('No data selected, Please type one particular day of the week or all')
         else:
             break
 
@@ -152,20 +152,32 @@ def user_stats(df):
     
     # TO DO: Display counts of gender
     print('\nUser Gender\n')
-    gender_count = df['Gender'].value_counts()
-    print(gender_count)
+    try:
+        gender_count = df['Gender'].value_counts()
+        print(gender_count)
+    except:
+        print('No data available for that city')
     
     # TO DO: Display earliest, most recent, and most common year of birth
     print('\nUser years of birth\n')
-    earliest_year = df['Birth Year'].min()
-    print('Earliest year:', earliest_year)
+    try:
+        earliest_year = df['Birth Year'].min()
+        print('Earliest year:', earliest_year)
+    except:
+        print('No data available for that city')
     
-    recent_year = df['Birth Year'].max()
-    print('Recent year:', recent_year)
-
-    common_year = df['Birth Year'].mode()
-    print('Common year:', common_year) 
-    
+    try:
+        recent_year = df['Birth Year'].max()
+        print('Recent year:', recent_year)
+    except:
+        print('No data available for that city')
+        
+    try:
+        common_year = df['Birth Year'].mode()
+        print('Common year:', common_year) 
+    except:
+        print('No data available for that city')
+        
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
@@ -174,12 +186,21 @@ def main():
     while True:
         city, month, day = get_filters()
         df = load_data(city, month, day)
-
+                
         time_stats(df)
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df)
-
+        
+        rowIndex = 0
+        while True:
+            raw_data = input('Do you want to see 5 unique rows of raw data? Type yes or no: ')
+            if raw_data == 'yes':
+                print(df.iloc[rowIndex: rowIndex + 5])
+                rowIndex = rowIndex + 5
+            else:
+                break
+        
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
             break
